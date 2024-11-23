@@ -11,7 +11,7 @@ import (
 )
 
 // ParallelSum calculates the sum of squares using goroutines
-func ParallelSum(numbers []int) int {
+func ParallelSum(numbers []int, routines int) int {
 	var wg sync.WaitGroup
 	sum := 0
 	var mu sync.Mutex
@@ -28,7 +28,7 @@ func ParallelSum(numbers []int) int {
 		mu.Unlock()
 	}
 
-	chunkSize := len(numbers) / 4
+	chunkSize := len(numbers) / routines
 	for i := 0; i < 4; i++ {
 		start := i * chunkSize
 		end := start + chunkSize
@@ -80,7 +80,7 @@ func main() {
 
 	// Measure time for parallel computation
 	start := time.Now()
-	sum := ParallelSum(numbers)
+	sum := ParallelSum(numbers, 4)
 	elapsed := time.Since(start)
 
 	fmt.Printf("Parallel sum of squares: %d\n", sum)
