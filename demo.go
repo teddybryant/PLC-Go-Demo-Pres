@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -10,8 +11,20 @@ import (
 	"time"
 )
 
-// ParallelSum calculates the sum of squares using goroutines
-func ParallelSum(numbers []int, routines int) int {
+// SafeDivide performs division and handles division-by-zero errors.
+func SafeDivide(a, b int) (int, error) {
+	if b == 0 {
+		return 0, errors.New("division by zero is not allowed")
+	}
+	return a / b, nil
+}
+
+// ParallelSum calculates the sum of squares using goroutines, with error handling.
+func ParallelSum(numbers []int, routines int) (int, error) {
+	if routines <= 0 {
+		return 0, errors.New("number of routines must be greater than zero")
+	}
+
 	var wg sync.WaitGroup
 	sum := 0
 	var mu sync.Mutex
@@ -29,10 +42,10 @@ func ParallelSum(numbers []int, routines int) int {
 	}
 
 	chunkSize := len(numbers) / routines
-	for i := 0; i < 4; i++ {
+	for i := 0; i < routines; i++ {
 		start := i * chunkSize
 		end := start + chunkSize
-		if i == 3 {
+		if i == routines-1 {
 			end = len(numbers) // Handle remainder
 		}
 		wg.Add(1)
@@ -40,7 +53,7 @@ func ParallelSum(numbers []int, routines int) int {
 	}
 
 	wg.Wait()
-	return sum
+	return sum, nil
 }
 
 // ReadIntegersFromFile reads integers from a file
@@ -68,21 +81,109 @@ func ReadIntegersFromFile(filename string) ([]int, error) {
 	return numbers, scanner.Err()
 }
 
+// Custom type
+type Rectangle struct {
+	Width, Height float64
+}
+
+// Interface
+type Shape interface {
+	Area() float64
+}
+
+func (r Rectangle) Area() float64 {
+	return r.Width * r.Height
+}
+
 func main() {
+	defer fmt.Println("\nDeferred: clean up resources")
+	fmt.Println("### Go Demo ###")
+
+	// SECTION 1: Basic Syntax and Typing
+	fmt.Println("\n# Section 1: Basic Syntax and Typing")
+
+	x := 10
+	fmt.Printf("Variable x initialized with value %d\n", x)
+	if x > 5 {
+		fmt.Println("x is greater than 5")
+	}
+
+	// For loop
+	fmt.Println("For loop demonstration:")
+	for i := 0; i < 3; i++ {
+		fmt.Printf("Loop iteration %d\n", i)
+	}
+
+	// Type inference and static typing
+	var y = 20 // Type inferred as int
+	fmt.Printf("Variable y inferred as type %T with value %d\n", y, y)
+
+	// Custom type and interface
+	var s Shape = Rectangle{Width: 5, Height: 10}
+	fmt.Printf("Area of rectangle: %.2f\n", s.Area())
+
+	// Conditional logic with if-else
+	num := 42
+	if num%2 == 0 {
+		fmt.Println("Even")
+	} else {
+		fmt.Println("Odd")
+	}
+
+	// Switch-case
+	day := "Tuesday"
+	fmt.Printf("Day: %s\n", day)
+	switch day {
+	case "Monday":
+		fmt.Println("Start of the week!")
+	case "Tuesday":
+		fmt.Println("Second day")
+	default:
+		fmt.Println("Midweek or later")
+	}
+
+	// SECTION 2: Error Handling
+	fmt.Println("\n# Section 2: Error Handling")
+
+	// SafeDivide function
+	fmt.Println("SafeDivide function:")
+	divResult, err := SafeDivide(10, 2)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Printf("Result of 10 / 2: %d\n", divResult)
+	}
+
+	divResult, err = SafeDivide(10, 0)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	} else {
+		fmt.Printf("Result of 10 / 0: %d\n", divResult)
+	}
+
+	// SECTION 3: Parallelism and Concurrency
+	fmt.Println("\n# Section 3: Parallelism and Concurrency")
+
 	filename := "numbers.txt" // Create a file with integers separated by spaces/newlines
 
-	// Read numbers from file
+	// Reading numbers from file
+	fmt.Println("Reading numbers from file...")
 	numbers, err := ReadIntegersFromFile(filename)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Printf("Error reading file: %v\n", err)
 		return
 	}
 
-	// Measure time for parallel computation
+	// Measuring time for ParallelSum
 	start := time.Now()
-	sum := ParallelSum(numbers, 4)
+	sum, err := ParallelSum(numbers, 4)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
 	elapsed := time.Since(start)
-
 	fmt.Printf("Parallel sum of squares: %d\n", sum)
 	fmt.Printf("Time taken: %s\n", elapsed)
+
+	fmt.Println("\n### End of Demo ###")
 }
