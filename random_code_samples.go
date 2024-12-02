@@ -100,6 +100,11 @@ func main() {
 	fmt.Printf("explicitInt: %d (type: %T)\n", explicitInt, explicitInt)
 	fmt.Printf("inferredInt: %d (type: %T)\n", inferredInt, inferredInt)
 
+	defer fmt.Println("Printed last")
+	fmt.Println("Rprinted first")
+
+	//panic("Something is wrong")
+
 	var x int = 10
 
 	fmt.Printf("Variable x initialized with value %d\n", x)
