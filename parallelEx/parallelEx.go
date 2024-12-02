@@ -21,4 +21,5 @@ func main() {
 	result2 := <-ch
 	total := result1 + result2
 	fmt.Println("Sum of squares:", total)
+	fmt.Println("Hello World!")
 }
