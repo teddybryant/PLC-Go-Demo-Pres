@@ -18,6 +18,15 @@ func SafeDivide(a, b int) (int, error) {
 	return a / b, nil
 }
 
+func safeCall() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	panic("Panicking!")
+}
+
 func ParallelSum(numbers []int, routines int) (int, error) {
 	if routines <= 0 {
 		return 0, errors.New("number of routines must be greater than zero")
@@ -97,13 +106,14 @@ func main() {
 	var explicitInt int = 100
 	inferredInt := 100
 
+	var x int    // v will be 0 by default
+	var s string // s will be an empty string ""
+
 	fmt.Printf("explicitInt: %d (type: %T)\n", explicitInt, explicitInt)
 	fmt.Printf("inferredInt: %d (type: %T)\n", inferredInt, inferredInt)
 
 	defer fmt.Println("Printed last")
 	fmt.Println("Rprinted first")
-
-	//panic("Something is wrong")
 
 	var x int = 10
 

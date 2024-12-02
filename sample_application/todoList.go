@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -21,13 +20,13 @@ func main() {
 		fmt.Print("Choose an option: ")
 
 		scanner.Scan()
-		choice := strings.TrimSpace(scanner.Text())
+		choice := scanner.Text()
 
 		switch choice {
 		case "1":
 			fmt.Print("Enter task: ")
 			scanner.Scan()
-			task := strings.TrimSpace(scanner.Text())
+			task := scanner.Text()
 			todoList = append(todoList, task)
 			fmt.Println("Task added.")
 
@@ -44,7 +43,7 @@ func main() {
 			}
 			fmt.Print("Enter the task number to remove: ")
 			scanner.Scan()
-			input := strings.TrimSpace(scanner.Text())
+			input := scanner.Text()
 			taskNum, err := strconv.Atoi(input)
 			if err != nil || taskNum < 1 || taskNum > len(todoList) {
 				fmt.Println("Invalid task number.")

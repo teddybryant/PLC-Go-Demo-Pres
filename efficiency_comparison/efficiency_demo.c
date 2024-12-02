@@ -20,12 +20,9 @@ int main(int argc, char *argv[]) {
     long n = 1000000;
     clock_t start = clock();
     long long sum = sumFibonacci(n);
-
     clock_t end = clock();
     double elapsed_time = ((double)(end - start)) / CLOCKS_PER_SEC;
-
     printf("Sum of the first %ld Fibonacci numbers: %lld\n", n, sum);
     printf("C's Execution time: %f seconds\n", elapsed_time);
-
     return 0;
 }
